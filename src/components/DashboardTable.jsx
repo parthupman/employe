@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { deleteEmployee } from '../redux/employees/employeeSlice';
 import CreateEmployeeForm from "./CreateEmployeeForm";
 import { Modal } from "@mui/material";
+import { HiPencil, HiTrash } from "react-icons/hi2";
 function DashboardTable({onEdit}) {
   const employees = useSelector(state => state.employees);
 
@@ -40,6 +41,8 @@ function DashboardTable({onEdit}) {
     <div>Address</div>     
     <div>Is Active</div>     
   </Table.Header>
+
+
   {employees.map((employee, index) => (
     <Table.Row key={index}>
       <div>{employee.id}</div>
@@ -59,22 +62,39 @@ function DashboardTable({onEdit}) {
       onCloseModal={() => setEmployeeToDelete(null)} />)}
       
         
-      <div></div>
+      <div>
+          <Modal>
+            <Menus.Menu>
+              <Menus.Toggle id={employee.id}/>
+              <Menus.List id={employee.id}>
+                <Modal.Open opens="edit">
+                <Menus.Button icon={<HiPencil />}>Update</Menus.Button>
+              </Modal.Open>
+
+               <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
+              </Modal.Open>
+              </Menus.List>
+                <Modal.Window name="edit">
+              <CreateEmployeeForm employeeToEdit={employee} />
+            </Modal.Window>
+            <Modal.Window name="delete">
+              <ConfirmDelete
+                resourceName="employee"
+                onConfirm={() => handleConfirmDelete(employeeToDelete)}           
+              />
+            </Modal.Window>
+            </Menus.Menu>
+          </Modal>
+      </div>
 
     </Table.Row>
   ))}
 
 
-          
         </Table>  
         </Menus> 
-        {employeeToEdit && (
-        
-        <CreateEmployeeForm 
-        employeeToEdit={employeeToEdit} 
-        onCloseModal={() => setEmployeeToEdit(null)} 
-        />
-        )} 
+      
       </div>
   );
 }
